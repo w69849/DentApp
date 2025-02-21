@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DentApp", "DentApp\DentApp.csproj", "{E0F9B7BF-AD41-4528-9C12-E6752A36AF8B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E0F9B7BF-AD41-4528-9C12-E6752A36AF8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0F9B7BF-AD41-4528-9C12-E6752A36AF8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0F9B7BF-AD41-4528-9C12-E6752A36AF8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0F9B7BF-AD41-4528-9C12-E6752A36AF8B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6F6ABE92-DDF2-4993-8A34-0C8012A4D82D}
+	EndGlobalSection
+EndGlobal
