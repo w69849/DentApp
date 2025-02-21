@@ -166,7 +166,7 @@ namespace DentApp
             {
                 if (appointmentsGrid.Rows.Count > 1)
                 {
-                    appointmentsGrid.Rows[e.RowIndex].Cells["visitNumber"].Value = (int)appointmentsGrid.Rows[appointmentsGrid.Rows.Count - 2].Cells["visitNumber"].Value + 1;
+                    appointmentsGrid.Rows[e.RowIndex].Cells["visitNumber"].Value = (Int64)appointmentsGrid.Rows[appointmentsGrid.Rows.Count - 2].Cells["visitNumber"].Value + 1;
                 }
                 else
                     appointmentsGrid.Rows[e.RowIndex].Cells["visitNumber"].Value = 1;

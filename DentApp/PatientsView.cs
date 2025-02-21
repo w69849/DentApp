@@ -51,7 +51,7 @@ namespace DentApp
             {
                 if (patientsGrid.Rows.Count > 1)
                 {
-                    patientsGrid.Rows[e.RowIndex].Cells["id"].Value = (int)patientsGrid.Rows[patientsGrid.Rows.Count - 2].Cells["id"].Value + 1;
+                    patientsGrid.Rows[e.RowIndex].Cells["id"].Value = (Int64)patientsGrid.Rows[patientsGrid.Rows.Count - 2].Cells["id"].Value + 1;
                 }
                 else
                     patientsGrid.Rows[e.RowIndex].Cells["id"].Value = 1;
