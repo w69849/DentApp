@@ -80,7 +80,7 @@
             Controls.Add(panel1);
             Controls.Add(navigationPanel);
             Name = "Form1";
-            Text = "Form1";
+            Text = "DentApp";
             WindowState = FormWindowState.Maximized;
             FormClosing += Form1_FormClosing;
             Load += Form1_Load;

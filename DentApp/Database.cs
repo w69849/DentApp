@@ -12,7 +12,7 @@ namespace DentApp
 {
     static class Database
     {
-        private const string connectionString = "Data Source = test41.db";
+        private const string connectionString = "Data Source = DentDatabase.db";
 
         private enum AppointmentStatus
         {
@@ -233,8 +233,8 @@ namespace DentApp
                                 }
                             }
 
-                            else
-                                MessageBox.Show("Coś nie tak z wartościami");                           
+                            //else
+                            //    MessageBox.Show("Coś nie tak z wartościami");                           
                         }               
                     }
                 }

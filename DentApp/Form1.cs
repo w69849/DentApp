@@ -17,7 +17,7 @@ namespace DentApp
 
         public Form1()
         {
-            if (!File.Exists("test41.db"))
+            if (!File.Exists("DentDatabase.db"))
                 Database.InitializeDatabase();
             
             InitializeComponent();           

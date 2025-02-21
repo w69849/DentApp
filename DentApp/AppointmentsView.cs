@@ -166,16 +166,18 @@ namespace DentApp
             {
                 if (appointmentsGrid.Rows.Count > 1)
                 {
-                    appointmentsGrid.Rows[e.RowIndex].Cells["visitNumber"].Value = (Int64)appointmentsGrid.Rows[appointmentsGrid.Rows.Count - 2].Cells["visitNumber"].Value + 1;
+                    appointmentsGrid.Rows[e.RowIndex].Cells["visitNumber"].Value = (int)appointmentsGrid.Rows[appointmentsGrid.Rows.Count - 2].Cells["visitNumber"].Value + 1;
                 }
+                else
+                    appointmentsGrid.Rows[e.RowIndex].Cells["visitNumber"].Value = 1;
 
-                //if (patientsGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != null)
-                //{
-                string s = appointmentsGrid.Rows[e.RowIndex].Cells["visitNumber"].Value.ToString();
+                if (appointmentsGrid.Rows[e.RowIndex].Cells["visitNumber"].Value != null)
+                {
+                    string s = appointmentsGrid.Rows[e.RowIndex].Cells["visitNumber"].Value.ToString();
 
-                int.TryParse(s, out int index);
-                rowStates[index] = RowState.New;
-                //}
+                    int.TryParse(s, out int index);
+                    rowStates[index] = RowState.New;
+                }
 
                 appointmentsGrid.Rows[e.RowIndex].Cells["status"].Value = "Oczekująca";
                 appointmentsGrid.Rows[e.RowIndex].Cells["cost"].Value = "-";

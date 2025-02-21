@@ -51,16 +51,18 @@ namespace DentApp
             {
                 if (patientsGrid.Rows.Count > 1)
                 {
-                    patientsGrid.Rows[e.RowIndex].Cells["id"].Value = (Int64)patientsGrid.Rows[patientsGrid.Rows.Count - 2].Cells["id"].Value + 1;
+                    patientsGrid.Rows[e.RowIndex].Cells["id"].Value = (int)patientsGrid.Rows[patientsGrid.Rows.Count - 2].Cells["id"].Value + 1;
                 }
+                else
+                    patientsGrid.Rows[e.RowIndex].Cells["id"].Value = 1;
 
-                //if (patientsGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != null)
-                //{
-                string s = patientsGrid.Rows[e.RowIndex].Cells["id"].Value.ToString();
+                if (patientsGrid.Rows[e.RowIndex].Cells["id"].Value != null)
+                {
+                    string s = patientsGrid.Rows[e.RowIndex].Cells["id"].Value.ToString();
 
-                int.TryParse(s, out int index);
-                rowStates[index] = RowState.New;
-                //}
+                    int.TryParse(s, out int index);
+                    rowStates[index] = RowState.New;
+                }
             }
         }
 
