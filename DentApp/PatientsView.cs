@@ -165,6 +165,21 @@ namespace DentApp
                     }
                 }              
             }
+
+            if (patientsGrid.Rows[e.RowIndex].Cells["id"].Value != null)
+            {
+                string s = patientsGrid.Rows[e.RowIndex].Cells["id"].Value.ToString();
+
+                int.TryParse(s, out int index);
+
+
+
+                if (rowStates[index] != RowState.New)
+                {
+                    
+                    rowStates[index] = RowState.Modified;
+                }
+            }
         }
 
         private void patientsGrid_RowValidating(object sender, DataGridViewCellCancelEventArgs e)

@@ -14,15 +14,15 @@ namespace DentApp
     {
         private const string connectionString = "Data Source = DentDatabase.db";
 
-        private enum AppointmentStatus
-        {
-            Oczekująca,
-            Zrealizowana,
-            Odwołana,
-            [Description("Nieobecność pacjenta")]
-            Nieobecność_pacjenta,
-            Aktualna
-        }
+        //private enum AppointmentStatus
+        //{
+        //    Oczekująca,
+        //    Zrealizowana,
+        //    Odwołana,
+        //    [Description("Nieobecność pacjenta")]
+        //    Nieobecność_pacjenta,
+        //    Aktualna
+        //}
 
         public static void InitializeDatabase()
         {
@@ -137,6 +137,28 @@ namespace DentApp
                                 var command = new SqliteCommand(
                                 "INSERT INTO Patients (name, surname, pesel)" +
                                 "VALUES (@name, @surname, @pesel)", conn);
+
+                                command.Parameters.AddWithValue("@name", row.Cells["name"].Value);
+                                command.Parameters.AddWithValue("@surname", row.Cells["surname"].Value);
+                                command.Parameters.AddWithValue("@pesel", row.Cells["pesel"].Value);
+
+                                try
+                                {
+                                    command.ExecuteNonQuery();
+                                    rowStates[index] = PatientsView.RowState.Added;
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show(ex.Message);
+                                }
+                            }
+
+                            if (rowStates[index] == PatientsView.RowState.Modified)
+                            {
+                                var command = new SqliteCommand(
+                                "UPDATE Patients " +
+                                "SET name = @name, surname = @surname, pesel = @pesel " +
+                                "WHERE id = " + index, conn);
 
                                 command.Parameters.AddWithValue("@name", row.Cells["name"].Value);
                                 command.Parameters.AddWithValue("@surname", row.Cells["surname"].Value);
