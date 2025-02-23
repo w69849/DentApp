@@ -172,11 +172,8 @@ namespace DentApp
 
                 int.TryParse(s, out int index);
 
-
-
                 if (rowStates[index] != RowState.New)
-                {
-                    
+                {                
                     rowStates[index] = RowState.Modified;
                 }
             }
@@ -190,7 +187,7 @@ namespace DentApp
                 {
                     patientsGrid.Rows[e.RowIndex].ErrorText = "Komórki nie mogą być puste.";
                     e.Cancel = true; // Prevents leaving the row
-                    return;
+                    //return;
                 }
             }
         }

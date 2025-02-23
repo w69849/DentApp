@@ -31,15 +31,16 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             appointmentsGrid = new DataGridView();
+            saveButton = new Button();
+            addVisitButton = new Button();
+            patientsListBox = new ListBox();
+            editButton = new Button();
             visitNumber = new DataGridViewTextBoxColumn();
-            data = new DataGridViewTextBoxColumn();
+            date = new DataGridViewTextBoxColumn();
             patient = new DataGridViewTextBoxColumn();
             pesel = new DataGridViewTextBoxColumn();
             status = new DataGridViewComboBoxColumn();
             cost = new DataGridViewTextBoxColumn();
-            saveButton = new Button();
-            addVisitButton = new Button();
-            patientsListBox = new ListBox();
             ((System.ComponentModel.ISupportInitialize)appointmentsGrid).BeginInit();
             SuspendLayout();
             // 
@@ -61,7 +62,7 @@
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
             appointmentsGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             appointmentsGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            appointmentsGrid.Columns.AddRange(new DataGridViewColumn[] { visitNumber, data, patient, pesel, status, cost });
+            appointmentsGrid.Columns.AddRange(new DataGridViewColumn[] { visitNumber, date, patient, pesel, status, cost });
             appointmentsGrid.Location = new Point(18, 99);
             appointmentsGrid.Name = "appointmentsGrid";
             appointmentsGrid.ReadOnly = true;
@@ -73,9 +74,50 @@
             appointmentsGrid.CellEndEdit += appointmentsGrid_CellEndEdit;
             appointmentsGrid.CellValidating += appointmentsGrid_CellValidating;
             appointmentsGrid.EditingControlShowing += appointmentsGrid_EditingControlShowing;
+            appointmentsGrid.RowsAdded += appointmentsGrid_RowsAdded;
             appointmentsGrid.RowValidating += appointmentsGrid_RowValidating;
             appointmentsGrid.UserAddedRow += appointmentsGrid_UserAddedRow;
-            appointmentsGrid.RowsAdded += appointmentsGrid_RowsAdded;
+            // 
+            // saveButton
+            // 
+            saveButton.Location = new Point(218, 13);
+            saveButton.Name = "saveButton";
+            saveButton.Size = new Size(94, 54);
+            saveButton.TabIndex = 1;
+            saveButton.Text = "Zapisz zmiany";
+            saveButton.UseVisualStyleBackColor = true;
+            saveButton.Click += saveButton_Click;
+            // 
+            // addVisitButton
+            // 
+            addVisitButton.Location = new Point(18, 13);
+            addVisitButton.Name = "addVisitButton";
+            addVisitButton.Size = new Size(94, 54);
+            addVisitButton.TabIndex = 2;
+            addVisitButton.Text = "Dodaj\r\nwizytę";
+            addVisitButton.UseVisualStyleBackColor = true;
+            addVisitButton.Click += addVisitButton_Click;
+            // 
+            // patientsListBox
+            // 
+            patientsListBox.BackColor = SystemColors.AppWorkspace;
+            patientsListBox.FormattingEnabled = true;
+            patientsListBox.Location = new Point(438, 151);
+            patientsListBox.Name = "patientsListBox";
+            patientsListBox.Size = new Size(150, 104);
+            patientsListBox.TabIndex = 3;
+            patientsListBox.Visible = false;
+            patientsListBox.MouseDown += patientsListBox_MouseDown;
+            // 
+            // editButton
+            // 
+            editButton.Location = new Point(118, 13);
+            editButton.Name = "editButton";
+            editButton.Size = new Size(94, 54);
+            editButton.TabIndex = 4;
+            editButton.Text = "Edytuj";
+            editButton.UseVisualStyleBackColor = true;
+            editButton.Click += editButton_Click;
             // 
             // visitNumber
             // 
@@ -86,15 +128,15 @@
             visitNumber.ReadOnly = true;
             visitNumber.Width = 128;
             // 
-            // data
+            // date
             // 
             dataGridViewCellStyle2.Format = "G";
             dataGridViewCellStyle2.NullValue = null;
-            data.DefaultCellStyle = dataGridViewCellStyle2;
-            data.HeaderText = "Data";
-            data.MinimumWidth = 6;
-            data.Name = "data";
-            data.ReadOnly = true;
+            date.DefaultCellStyle = dataGridViewCellStyle2;
+            date.HeaderText = "Data";
+            date.MinimumWidth = 6;
+            date.Name = "date";
+            date.ReadOnly = true;
             // 
             // patient
             // 
@@ -127,41 +169,11 @@
             cost.Name = "cost";
             cost.ReadOnly = true;
             // 
-            // saveButton
-            // 
-            saveButton.Location = new Point(127, 13);
-            saveButton.Name = "saveButton";
-            saveButton.Size = new Size(94, 54);
-            saveButton.TabIndex = 1;
-            saveButton.Text = "Zapisz zmiany";
-            saveButton.UseVisualStyleBackColor = true;
-            saveButton.Click += saveButton_Click;
-            // 
-            // addVisitButton
-            // 
-            addVisitButton.Location = new Point(18, 13);
-            addVisitButton.Name = "addVisitButton";
-            addVisitButton.Size = new Size(94, 54);
-            addVisitButton.TabIndex = 2;
-            addVisitButton.Text = "Dodaj\r\nwizytę";
-            addVisitButton.UseVisualStyleBackColor = true;
-            addVisitButton.Click += addVisitButton_Click;
-            // 
-            // patientsListBox
-            // 
-            patientsListBox.BackColor = SystemColors.AppWorkspace;
-            patientsListBox.FormattingEnabled = true;
-            patientsListBox.Location = new Point(438, 151);
-            patientsListBox.Name = "patientsListBox";
-            patientsListBox.Size = new Size(150, 104);
-            patientsListBox.TabIndex = 3;
-            patientsListBox.Visible = false;
-            patientsListBox.MouseDown += patientsListBox_MouseDown;
-            // 
             // AppointmentsView
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(editButton);
             Controls.Add(patientsListBox);
             Controls.Add(addVisitButton);
             Controls.Add(saveButton);
@@ -178,12 +190,13 @@
         public DataGridView appointmentsGrid;
         private Button saveButton;
         private Button addVisitButton;
+        private ListBox patientsListBox;
+        private Button editButton;
         private DataGridViewTextBoxColumn visitNumber;
-        private DataGridViewTextBoxColumn data;
+        private DataGridViewTextBoxColumn date;
         private DataGridViewTextBoxColumn patient;
         private DataGridViewTextBoxColumn pesel;
         private DataGridViewComboBoxColumn status;
         private DataGridViewTextBoxColumn cost;
-        private ListBox patientsListBox;
     }
 }

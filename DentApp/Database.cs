@@ -255,6 +255,37 @@ namespace DentApp
                                 }
                             }
 
+                            if (rowStates[index] == AppointmentsView.RowState.Modified)
+                            {
+                                var cmd = new SqliteCommand("SELECT id FROM Patients WHERE pesel = @pesel", conn);
+                                cmd.Parameters.AddWithValue("@pesel", row.Cells["Pesel"].Value);
+
+                                string id = null;
+                                try
+                                {
+                                    if (cmd.ExecuteScalar() != null)
+                                    {
+                                        id = cmd.ExecuteScalar().ToString();
+                                        var command = new SqliteCommand(
+                                            "UPDATE Appointments " +
+                                            "SET date = @date, patientId = @id, status = @status, cost = @cost " +
+                                            "WHERE id = " + index, conn);
+
+                                        command.Parameters.AddWithValue("@date", row.Cells["Data"].Value);
+                                        command.Parameters.AddWithValue("@patientId", id);
+                                        command.Parameters.AddWithValue("@status", row.Cells["Status"].Value);
+                                        command.Parameters.AddWithValue("@cost", row.Cells["cost"].Value);
+
+                                        command.ExecuteNonQuery();
+                                        rowStates[index] = AppointmentsView.RowState.Added;
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show(ex.Message);
+                                }
+                            }
+
                             //else
                             //    MessageBox.Show("Coś nie tak z wartościami");                           
                         }               

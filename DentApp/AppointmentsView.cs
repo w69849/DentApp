@@ -46,6 +46,9 @@ namespace DentApp
         private void saveButton_Click(object sender, EventArgs e)
         {
             Database.SaveAppointments(appointmentsGrid, rowStates);
+            appointmentsGrid.ReadOnly = true;
+            editButton.Enabled = true;
+            appointmentsGrid.EditMode = DataGridViewEditMode.EditProgrammatically;
         }
 
         private void appointmentsGrid_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
@@ -69,6 +72,22 @@ namespace DentApp
                 {
                     appointmentsGrid.Rows[e.RowIndex].ErrorText = "Pesel musi mieć 11 cyfr.";
                     e.Cancel = true; // Cancels the cell edit
+                }
+            }
+
+            if (appointmentsGrid.Columns[e.ColumnIndex].Name == "date")
+            {
+                DateTime temp;
+                string format = "dd.MM.yyyy HH:mm:ss"; // Date and Time Format
+
+                if (!DateTime.TryParseExact(e.FormattedValue.ToString(), format,
+                                            System.Globalization.CultureInfo.InvariantCulture,
+                                            System.Globalization.DateTimeStyles.None,
+                                            out temp))
+                {
+                    MessageBox.Show("Invalid date format! Please use dd/MM/yyyy HH:mm:ss.",
+                                    "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    e.Cancel = true; // Prevents leaving the cell until valid input
                 }
             }
         }
@@ -98,8 +117,9 @@ namespace DentApp
                 string s = appointmentsGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
                 int.TryParse(s, out int index);
 
-                rowStates[index] = RowState.New;
-            }             
+                if (rowStates[index] != RowState.New)
+                    rowStates[index] = RowState.Modified;
+            }
         }
 
         private void appointmentsGrid_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -187,6 +207,13 @@ namespace DentApp
         private void AppointmentsView_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void editButton_Click(object sender, EventArgs e)
+        {
+            editButton.Enabled = false;
+            appointmentsGrid.ReadOnly = false;
+            appointmentsGrid.EditMode = DataGridViewEditMode.EditOnKeystrokeOrF2;
         }
     }
 }
