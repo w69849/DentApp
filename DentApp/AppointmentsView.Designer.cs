@@ -31,16 +31,17 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             appointmentsGrid = new DataGridView();
-            saveButton = new Button();
-            addVisitButton = new Button();
-            patientsListBox = new ListBox();
-            editButton = new Button();
             visitNumber = new DataGridViewTextBoxColumn();
             date = new DataGridViewTextBoxColumn();
             patient = new DataGridViewTextBoxColumn();
             pesel = new DataGridViewTextBoxColumn();
             status = new DataGridViewComboBoxColumn();
             cost = new DataGridViewTextBoxColumn();
+            saveButton = new Button();
+            addVisitButton = new Button();
+            patientsListBox = new ListBox();
+            editButton = new Button();
+            openVisitButton = new Button();
             ((System.ComponentModel.ISupportInitialize)appointmentsGrid).BeginInit();
             SuspendLayout();
             // 
@@ -77,47 +78,7 @@
             appointmentsGrid.RowsAdded += appointmentsGrid_RowsAdded;
             appointmentsGrid.RowValidating += appointmentsGrid_RowValidating;
             appointmentsGrid.UserAddedRow += appointmentsGrid_UserAddedRow;
-            // 
-            // saveButton
-            // 
-            saveButton.Location = new Point(218, 13);
-            saveButton.Name = "saveButton";
-            saveButton.Size = new Size(94, 54);
-            saveButton.TabIndex = 1;
-            saveButton.Text = "Zapisz zmiany";
-            saveButton.UseVisualStyleBackColor = true;
-            saveButton.Click += saveButton_Click;
-            // 
-            // addVisitButton
-            // 
-            addVisitButton.Location = new Point(18, 13);
-            addVisitButton.Name = "addVisitButton";
-            addVisitButton.Size = new Size(94, 54);
-            addVisitButton.TabIndex = 2;
-            addVisitButton.Text = "Dodaj\r\nwizytę";
-            addVisitButton.UseVisualStyleBackColor = true;
-            addVisitButton.Click += addVisitButton_Click;
-            // 
-            // patientsListBox
-            // 
-            patientsListBox.BackColor = SystemColors.AppWorkspace;
-            patientsListBox.FormattingEnabled = true;
-            patientsListBox.Location = new Point(438, 151);
-            patientsListBox.Name = "patientsListBox";
-            patientsListBox.Size = new Size(150, 104);
-            patientsListBox.TabIndex = 3;
-            patientsListBox.Visible = false;
-            patientsListBox.MouseDown += patientsListBox_MouseDown;
-            // 
-            // editButton
-            // 
-            editButton.Location = new Point(118, 13);
-            editButton.Name = "editButton";
-            editButton.Size = new Size(94, 54);
-            editButton.TabIndex = 4;
-            editButton.Text = "Edytuj";
-            editButton.UseVisualStyleBackColor = true;
-            editButton.Click += editButton_Click;
+            appointmentsGrid.CellDoubleClick += appointmentsGrid_CellDoubleClick;
             // 
             // visitNumber
             // 
@@ -169,10 +130,63 @@
             cost.Name = "cost";
             cost.ReadOnly = true;
             // 
+            // saveButton
+            // 
+            saveButton.Location = new Point(218, 13);
+            saveButton.Name = "saveButton";
+            saveButton.Size = new Size(94, 54);
+            saveButton.TabIndex = 1;
+            saveButton.Text = "Zapisz zmiany";
+            saveButton.UseVisualStyleBackColor = true;
+            saveButton.Click += saveButton_Click;
+            // 
+            // addVisitButton
+            // 
+            addVisitButton.Location = new Point(18, 13);
+            addVisitButton.Name = "addVisitButton";
+            addVisitButton.Size = new Size(94, 54);
+            addVisitButton.TabIndex = 2;
+            addVisitButton.Text = "Dodaj\r\nwizytę";
+            addVisitButton.UseVisualStyleBackColor = true;
+            addVisitButton.Click += addVisitButton_Click;
+            // 
+            // patientsListBox
+            // 
+            patientsListBox.BackColor = SystemColors.AppWorkspace;
+            patientsListBox.FormattingEnabled = true;
+            patientsListBox.Location = new Point(438, 151);
+            patientsListBox.Name = "patientsListBox";
+            patientsListBox.Size = new Size(150, 104);
+            patientsListBox.TabIndex = 3;
+            patientsListBox.Visible = false;
+            patientsListBox.MouseDown += patientsListBox_MouseDown;
+            // 
+            // editButton
+            // 
+            editButton.Location = new Point(118, 13);
+            editButton.Name = "editButton";
+            editButton.Size = new Size(94, 54);
+            editButton.TabIndex = 4;
+            editButton.Text = "Edytuj";
+            editButton.UseVisualStyleBackColor = true;
+            editButton.Click += editButton_Click;
+            // 
+            // openVisitButton
+            // 
+            openVisitButton.Anchor = AnchorStyles.Top;
+            openVisitButton.Location = new Point(438, 13);
+            openVisitButton.Name = "openVisitButton";
+            openVisitButton.Size = new Size(94, 54);
+            openVisitButton.TabIndex = 5;
+            openVisitButton.Text = "Przejdź do wizyty";
+            openVisitButton.UseVisualStyleBackColor = true;
+            openVisitButton.Click += openVisitButton_Click;
+            // 
             // AppointmentsView
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(openVisitButton);
             Controls.Add(editButton);
             Controls.Add(patientsListBox);
             Controls.Add(addVisitButton);
@@ -198,5 +212,6 @@
         private DataGridViewTextBoxColumn pesel;
         private DataGridViewComboBoxColumn status;
         private DataGridViewTextBoxColumn cost;
+        private Button openVisitButton;
     }
 }

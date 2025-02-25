@@ -28,30 +28,54 @@ namespace DentApp
         {
             using (SqliteConnection connection = new SqliteConnection(connectionString))
             {
-                connection.Open();
+                try
+                {
+                    connection.Open();
 
-                var command = new SqliteCommand();
-                command = connection.CreateCommand();
+                    var command = new SqliteCommand();
+                    command = connection.CreateCommand();
 
-                command.CommandText =
-                $@"
-                    CREATE TABLE Patients
-                    ( 
-                        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                        name TEXT NOT NULL,
-                        surname TEXT NOT NULL,
-                        pesel TEXT NOT NULL
-                    );
+                    command.CommandText =
+                        $@"
+                        CREATE TABLE Healthstates
+                        (
+                            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                            treatmentId INTEGER NOT NULL,
+                            toothing TEXT NOT NULL,
+                            upperBraces INTEGER NOT NULL CHECK (upperBraces IN (0,1)),
+                            lowerBraces INTEGER NOT NULL CHECK (lowerBraces IN (0,1))
+                        )
 
-                    
-                ";
+                        CREATE TABLE Performed_treatments
+                        (
+                            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                            appointmentId INTEGER NOT NULL,
+                            description TEXT
+                        )
 
-                command.ExecuteNonQuery();
+                        CREAETE TABLE Diagnoses
+                        (
+                            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                        )
+                    ";
 
-                //INSERT INTO Patients VALUES(1, 'Michał', 'Lewandowski', '01234567890');
-                //INSERT INTO Patients VALUES(2, 'Bartłomiej', 'Bocheński', '90123456789')
-                command.CommandText =
-                    $@"
+                    command.ExecuteNonQuery();
+
+                    command.CommandText =
+                        $@"
+                        CREATE TABLE Patients
+                        ( 
+                            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                            name TEXT NOT NULL,
+                            surname TEXT NOT NULL,
+                            pesel TEXT NOT NULL
+                        );        
+                        ";
+
+                    command.ExecuteNonQuery();
+
+                    command.CommandText =
+                        $@"
                         CREATE TABLE Appointments
                         (
                             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -61,16 +85,14 @@ namespace DentApp
                             cost DECIMAL(8,2)
                             
                         )
-                    ";
-                //INSERT INTO Appointments VALUES(1, '2025-02-17 12:00:00', 5, 'Zrealizowana');
-                //INSERT INTO Appointments VALUES(2, '2025-02-17 14:00:00', 6, 'Zrealizowana')
-                //command.CommandText =
-                //    $@"
-                //               
+                        ";
 
-                //    ";
-
-                command.ExecuteNonQuery();
+                    command.ExecuteNonQuery();
+                }
+                catch(Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                }
             }
         }
 
@@ -208,7 +230,7 @@ namespace DentApp
             }
         }
 
-        public static void SaveAppointments(DataGridView appointmentsGrid, Dictionary<int, AppointmentsView.RowState> rowStates)
+        public static bool SaveAppointments(DataGridView appointmentsGrid, Dictionary<int, AppointmentsView.RowState> rowStates)
         {
             using (SqliteConnection conn = new SqliteConnection(connectionString))
             {
@@ -227,31 +249,34 @@ namespace DentApp
                             {
                                 var cmd = new SqliteCommand("SELECT id FROM Patients WHERE pesel = @pesel", conn);
                                 cmd.Parameters.AddWithValue("@pesel", row.Cells["Pesel"].Value);
-
-                                string id = null;
+  
                                 try
                                 {
                                     if (cmd.ExecuteScalar() != null)
                                     {
+                                        string id = null;
                                         id = cmd.ExecuteScalar().ToString();
 
                                         var command = new SqliteCommand(
                                             "INSERT INTO Appointments (date, patientId, status, cost)" +
                                             "VALUES (@date, @patientId, @status, @cost)", conn);
 
-                                        command.Parameters.AddWithValue("@date", row.Cells["Data"].Value);
+                                        command.Parameters.AddWithValue("@date", row.Cells["date"].Value);
                                         command.Parameters.AddWithValue("@patientId", id);
-                                        command.Parameters.AddWithValue("@status", row.Cells["Status"].Value);
+                                        command.Parameters.AddWithValue("@status", row.Cells["status"].Value);
                                         command.Parameters.AddWithValue("@cost", row.Cells["cost"].Value);
 
 
                                         command.ExecuteNonQuery();
                                         rowStates[index] = AppointmentsView.RowState.Added;
+
+                                        return true;
                                     }
                                 }
                                 catch (Exception ex)
                                 {
                                     MessageBox.Show(ex.Message);
+                                    return false;
                                 }
                             }
 
@@ -259,13 +284,14 @@ namespace DentApp
                             {
                                 var cmd = new SqliteCommand("SELECT id FROM Patients WHERE pesel = @pesel", conn);
                                 cmd.Parameters.AddWithValue("@pesel", row.Cells["Pesel"].Value);
-
-                                string id = null;
+                              
                                 try
                                 {
                                     if (cmd.ExecuteScalar() != null)
                                     {
+                                        string id = null;
                                         id = cmd.ExecuteScalar().ToString();
+
                                         var command = new SqliteCommand(
                                             "UPDATE Appointments " +
                                             "SET date = @date, patientId = @id, status = @status, cost = @cost " +
@@ -278,19 +304,24 @@ namespace DentApp
 
                                         command.ExecuteNonQuery();
                                         rowStates[index] = AppointmentsView.RowState.Added;
+
+                                        return true;
                                     }
                                 }
                                 catch (Exception ex)
                                 {
                                     MessageBox.Show(ex.Message);
+                                    return false;
                                 }
                             }
 
                             //else
                             //    MessageBox.Show("Coś nie tak z wartościami");                           
-                        }               
-                    }
+                        }
+                    }         
                 }
+
+                return false;
             }
         }
     }

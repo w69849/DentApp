@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+//using System.Reflection.Emit;
 using System.Windows.Forms;
 
 namespace DentApp
@@ -45,7 +44,9 @@ namespace DentApp
 
         private void saveButton_Click(object sender, EventArgs e)
         {
-            Database.SaveAppointments(appointmentsGrid, rowStates);
+            if (Database.SaveAppointments(appointmentsGrid, rowStates))
+                MessageBox.Show("Zapisano");
+
             appointmentsGrid.ReadOnly = true;
             editButton.Enabled = true;
             appointmentsGrid.EditMode = DataGridViewEditMode.EditProgrammatically;
@@ -59,14 +60,16 @@ namespace DentApp
                 {
                     appointmentsGrid.Rows[e.RowIndex].ErrorText = "Komórki nie mogą być puste.";
                     e.Cancel = true; // Prevents leaving the row
-                    return;
+                    //return;
                 }
             }
         }
 
         private void appointmentsGrid_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
-            if (appointmentsGrid.Columns[e.ColumnIndex].Name == "pesel")
+            string column = appointmentsGrid.Columns[e.ColumnIndex].Name;
+
+            if (column == "pesel")
             {
                 if (!e.FormattedValue.ToString().All(char.IsDigit))
                 {
@@ -75,19 +78,34 @@ namespace DentApp
                 }
             }
 
-            if (appointmentsGrid.Columns[e.ColumnIndex].Name == "date")
+            if (column == "date")
             {
                 DateTime temp;
                 string format = "dd.MM.yyyy HH:mm:ss"; // Date and Time Format
 
                 if (!DateTime.TryParseExact(e.FormattedValue.ToString(), format,
-                                            System.Globalization.CultureInfo.InvariantCulture,
-                                            System.Globalization.DateTimeStyles.None,
+                                            CultureInfo.InvariantCulture,
+                                            DateTimeStyles.None,
                                             out temp))
                 {
-                    MessageBox.Show("Invalid date format! Please use dd/MM/yyyy HH:mm:ss.",
-                                    "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    appointmentsGrid.Rows[e.RowIndex].ErrorText = "Zły format danych w kolumnie Data. Poprawny format to: dd.MM.yyyy hh:mm:ss";
                     e.Cancel = true; // Prevents leaving the cell until valid input
+                }
+            }
+
+            if (column == "koszt")
+            {
+                decimal cost;
+                NumberStyles style = NumberStyles.AllowThousands | NumberStyles.AllowDecimalPoint;
+                CultureInfo culture = CultureInfo.InvariantCulture; // Adjust if needed
+
+                if (appointmentsGrid.Rows[e.RowIndex].Cells["status"].Value == "Zrealizowana")
+                {
+                    if (!decimal.TryParse(e.FormattedValue.ToString(), style, culture, out cost))
+                    {
+                        appointmentsGrid.Rows[e.RowIndex].ErrorText = "Zły format danych w kolumnie Koszt. Poprawny format to przykładowo: 1,234.56";
+                        e.Cancel = true; // Prevents leaving the cell until valid input
+                    }
                 }
             }
         }
@@ -124,23 +142,26 @@ namespace DentApp
 
         private void appointmentsGrid_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            string column = appointmentsGrid.Columns[e.ColumnIndex].Name;
-
-            if ((column == "patient" || column == "pesel") && (e.RowIndex == appointmentsGrid.RowCount - 1))
+            if (e.ColumnIndex >= 0)
             {
-                Rectangle cellRect = appointmentsGrid.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, true);
-                patientsListBox.Location = new Point(appointmentsGrid.Left + cellRect.Left, appointmentsGrid.Top + cellRect.Bottom);
-                patientsListBox.Width = cellRect.Width;
-                patientsListBox.Visible = true;
+                string column = appointmentsGrid.Columns[e.ColumnIndex].Name;
 
-                if (patientsListBox.Items.Count < 1)
-                    Database.LoadPatients(patientsListBox);
-                patientsListBox.Refresh();
-                patientsListBox.Focus();
+                if ((column == "patient" || column == "pesel") && (e.RowIndex == appointmentsGrid.RowCount - 1))
+                {
+                    Rectangle cellRect = appointmentsGrid.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, true);
+                    patientsListBox.Location = new Point(appointmentsGrid.Left + cellRect.Left, appointmentsGrid.Top + cellRect.Bottom);
+                    patientsListBox.Width = cellRect.Width;
+                    patientsListBox.Visible = true;
+
+                    if (patientsListBox.Items.Count < 1)
+                        Database.LoadPatients(patientsListBox);
+                    patientsListBox.Refresh();
+                    patientsListBox.Focus();
+                }
+
+                else
+                    patientsListBox.Visible = false;
             }
-
-            else
-                patientsListBox.Visible = false;
         }
 
         private void patientsListBox_MouseDown(object sender, MouseEventArgs e)
@@ -201,6 +222,7 @@ namespace DentApp
 
                 appointmentsGrid.Rows[e.RowIndex].Cells["status"].Value = "Oczekująca";
                 appointmentsGrid.Rows[e.RowIndex].Cells["cost"].Value = "-";
+               // appointmentsGrid.Rows[e.RowIndex].Cells["cost"].ReadOnly = true;
             }
         }
 
@@ -214,6 +236,52 @@ namespace DentApp
             editButton.Enabled = false;
             appointmentsGrid.ReadOnly = false;
             appointmentsGrid.EditMode = DataGridViewEditMode.EditOnKeystrokeOrF2;
+        }
+
+        private void appointmentsGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            //if (e.ColumnIndex == 1 && e.RowIndex >= 0) // Adjust column index to match your ComboBox column
+            //{
+            //    string selectedValue = appointmentsGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value?.ToString();
+            //    MessageBox.Show($"Value changed in row {e.RowIndex}, column {e.ColumnIndex}: {selectedValue}");
+            //}
+        }
+
+        private void openVisitButton_Click(object sender, EventArgs e)
+        {
+            Label label = new Label();
+            label.Text = "Kliknij dwa razy na wizytę, aby do niej przejść";
+
+            int posX = openVisitButton.Location.X + (openVisitButton.Width / 2) - (TextRenderer.MeasureText(label.Text, label.Font).Width / 2);
+            int posY = openVisitButton.Location.Y + openVisitButton.Height + 10; // Place label below the button
+
+            label.Location = new Point(posX, posY);
+            label.AutoSize = true;
+
+            // Add the label to the form
+            this.Controls.Add(label);
+            openVisitButton.Enabled = false;
+        }
+
+        private void appointmentsGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if(!openVisitButton.Enabled)
+            {
+                if (e.RowIndex >= 0)
+                {
+                    // Get the selected row
+                    DataGridViewRow row = appointmentsGrid.Rows[e.RowIndex];
+
+                    // Example: Retrieve a value from a specific column
+                    string id = row.Cells["visitNumber"].Value.ToString();
+
+                    Appointment appointment = new Appointment();
+                    appointment.Show();
+
+                     //MessageBox.Show($"Double-clicked row: {e.RowIndex}, Value: {id}");
+                }
+            }
+            
         }
     }
 }
